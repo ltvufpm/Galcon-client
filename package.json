@@ -1,0 +1,31 @@
+{
+  "name": "galcon",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "webpack": "webpack --config webpack.config.js -w",
+    "start": "webpack-dev-server --config webpack.config.js --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^10.9.4",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.2",
+    "css-loader": "^1.0.0",
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
+    "style-loader": "^0.23.0",
+    "ts-loader": "^5.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "typescript": "^3.0.3",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
+  },
+  "dependencies": {
+    "mobx": "^5.1.0",
+    "phaser": "^3.12.0"
+  }
+}
