@@ -6,7 +6,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "config/webpack/development.js"
+        "config": "webpack.config.js"
       }
     }
   },
