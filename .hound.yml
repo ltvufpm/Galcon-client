@@ -1,0 +1,18 @@
+fail_on_violations: true
+tslint:
+  enabled: true
+scss:
+  config_file: .scss-lint.yml
+eslint:
+  enabled: true
+  config_file: .eslintrc_hound
+jshint:
+  enabled: false
+golint:
+  enabled: false
+swift:
+  enabled: false
+coffeescript:
+  enabled: false
+haml:
+  enabled: false

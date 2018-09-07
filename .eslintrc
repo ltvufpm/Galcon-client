@@ -1,0 +1,37 @@
+{
+  "env": {
+    "jest": true
+  },
+  "extends": ["airbnb"],
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "config/webpack/development.js"
+      }
+    }
+  },
+  "rules": {
+    "no-restricted-globals": ["error", "$", "_", "I18n", "Routes", "moment"]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.js",
+        "**/*.test.jsx",
+        "**/*.spec.js",
+        "**/*.spec.jsx",
+        "**/__tests__/**/*.test.js",
+        "**/__tests__/**/*.test.jsx",
+        "**/__tests__/**/*.spec.js",
+        "**/__tests__/**/*.spec.jsx",
+        "**/__tests__/**/*.js",
+        "**/__tests__/**/*.jsx",
+      ],
+      "globals": {
+        "mount": "true",
+        "shallow": "true",
+        "render": "true",
+      },
+    },
+  ]
+}
