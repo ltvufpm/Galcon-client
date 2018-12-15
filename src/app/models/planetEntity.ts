@@ -1,4 +1,4 @@
-export interface planetEntity {
+export default interface Planet {
   id: number;
   size: number;
   population: number;

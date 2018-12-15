@@ -1,4 +1,4 @@
-export interface playerEntity {
+export default interface Player {
   id: number;
   sessionId: string;
   name: string;
