@@ -35,7 +35,6 @@ function mainLoop (timer, game) {
   clearScreen(game.canvas, game.ctx)
   game.update()
   game.render()
-  timer.render()
   timer.endFrame()
   setTimeout(() => {
     mainLoop(timer, game)

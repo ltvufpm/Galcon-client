@@ -1,31 +1,28 @@
 import { randBetween } from '../Utils'
+const AUTO_COMMAND_INTERVAL = 200
 
-export default function GameAI (game) {
-  let self = this
-  const AUTO_COMMAND_INTERVAL = 200
+export default class DummyPlayer {
+  constructor (game) {
+    this.frameCounter = 0
+    this.game = game
+  }
 
-  self.frame_counter = 0
-  self.game = game
-
-  self.perform_frame_turn = function () {
-    self.update_frame_counter()
-
-    if (self.frame_counter % AUTO_COMMAND_INTERVAL === 0) {
-      return self.generate_random_command()
+  performFrameTurn () {
+    this.updateFrameCounter()
+    if (this.frameCounter % AUTO_COMMAND_INTERVAL === 0) {
+      return this.generateRandomCommand()
     } else {
       return null
     }
   }
-
-  self.update_frame_counter = function () {
-    self.frame_counter++
-    if (self.frame_counter > 1000 * 1000) self.frame_counter = 0
+  updateFrameCounter () {
+    this.frameCounter++
+    if (this.frameCounter > 1000 * 1000) this.frameCounter = 0
   }
-
-  self.generate_random_command = function () {
+  generateRandomCommand () {
     let side = randBetween(2, 3)
     let occupiedPlanets = []
-    let planets = self.game.planets
+    let planets = this.game.planets
     for (let i = 0; i < planets.length; i++) {
       let s = planets[i]
       if (s.side === side) occupiedPlanets.push(i)

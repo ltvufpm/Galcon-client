@@ -25,11 +25,4 @@ export default class Timer {
     this.shouldDelay = this.deltaCap - innerDeltaTime
     if (this.shouldDelay < 0) this.shouldDelay = 0
   }
-  render () {
-    this.ctx.fillStyle = '#FFFF00'
-    this.ctx.font = '28px Arial'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'alphabetic'
-    this.ctx.fillText('fps: ' + Number.parseInt(this.averageFrameRate), 500, 30)
-  }
 }

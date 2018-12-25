@@ -1,12 +1,12 @@
 import {
   euclidDist,
-  PLANET_COLORS,
   ONGOING_SHIPS_SPEED,
-  PLANET_SIZE
+  PLANET_SIZE,
+  randBetween
 } from '../Utils'
 
 export default class Ship {
-  constructor (originPlanetIndex, destPlanetIndex, planets, ctx) {
+  constructor (originPlanetIndex, destPlanetIndex, planets, ctx, canvas) {
     const originPlanet = planets[originPlanetIndex]
     this.planets = planets
     this.originIndex = originPlanetIndex
@@ -18,7 +18,22 @@ export default class Ship {
     this.destIndex = destPlanetIndex
     this.number = originPlanet.number / 2
     this.ctx = ctx
+    this.canvas = canvas
+
+    this.swarm = this.generateSwarm()
   }
+
+  generateSwarm () {
+    let res = []
+    for (let i = 0; i < this.number; i++) {
+      res.push({
+        x: randBetween(this.place.x, this.place.x - 50),
+        y: randBetween(this.place.y, this.place.y - 50)
+      })
+    }
+    return res
+  }
+
   march () {
     this.advance(ONGOING_SHIPS_SPEED)
   }
@@ -26,51 +41,32 @@ export default class Ship {
   render () {
     this.renderTail()
     this.renderBall()
-
     this.planets[this.originIndex].render()
     this.planets[this.destIndex].render()
   }
-  renderBall () {
-    const BALL_SIZE_CAP = 35
-
-    let outerBallSize = BALL_SIZE_CAP * (this.number / 50.0)
-    let innerBallsize = outerBallSize - 2
-    if (innerBallsize < 1) innerBallsize = 1
-
-    this.ctx.fillStyle = '#BBBBBB'
+  renderSmallBall (x, y) {
+    const BALL_SIZE = 5
+    this.ctx.fillStyle = this.ctx.colors[this.side].fill
     this.ctx.beginPath()
-    this.ctx.arc(this.place.x, this.place.y, outerBallSize, 0, 2 * Math.PI)
+    this.ctx.arc(x, y, BALL_SIZE, 0, 2 * Math.PI)
     this.ctx.fill()
-
-    this.ctx.fillStyle = PLANET_COLORS[this.side].back
+  }
+  renderBall () {
+    const BALL_SIZE = 5
+    this.ctx.fillStyle = this.ctx.colors[this.side].fill
     this.ctx.beginPath()
-    this.ctx.arc(this.place.x, this.place.y, innerBallsize, 0, 2 * Math.PI)
+    this.ctx.arc(
+      this.place.x - 25,
+      this.place.y - 25,
+      BALL_SIZE,
+      0,
+      2 * Math.PI
+    )
     this.ctx.fill()
   }
 
   renderTail () {
-    const TAIL_LENGTH = 70
-    let destPlace = this.planets[this.destIndex].place
-    let originPlace = this.planets[this.originIndex].place
-    let backDist = euclidDist(originPlace, this.place)
-    let tailLength = TAIL_LENGTH
-    if (tailLength > backDist) tailLength = backDist
-
-    let longOffsetX = destPlace.x - this.place.x
-    let longOffsetY = destPlace.y - this.place.y
-
-    let longDist = euclidDist(destPlace, this.place)
-
-    let stepX = tailLength * longOffsetX / longDist
-    let stepY = tailLength * longOffsetY / longDist
-    let tailEndX = this.place.x - stepX
-    let tailEndY = this.place.y - stepY
-
-    this.ctx.strokeStyle = '#BBBBBB'
-    this.ctx.lineWidth = 3
-    this.ctx.moveTo(this.place.x, this.place.y)
-    this.ctx.lineTo(tailEndX, tailEndY)
-    this.ctx.stroke()
+    this.swarm.map(({ x, y }) => this.renderSmallBall(x, y))
   }
 
   advance (dist) {
@@ -84,6 +80,10 @@ export default class Ship {
     if (longDist >= dist) {
       this.place.x += stepX
       this.place.y += stepY
+      for (let swarmling of this.swarm) {
+        swarmling.x += stepX
+        swarmling.y += stepY
+      }
     }
   }
 

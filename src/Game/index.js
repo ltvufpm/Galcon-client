@@ -1,6 +1,12 @@
-import { randBetween, euclidDist, PLANET_SIZE } from '../Utils'
+import {
+  randBetween,
+  euclidDist,
+  PLANET_SIZE,
+  getPlanetColors,
+  COLORS
+} from '../Utils'
 import Planet from '../Planet'
-import GameAI from '../GameAI'
+import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
@@ -52,6 +58,7 @@ export default class Game {
   constructor (canvas, ctx) {
     this.canvas = canvas
     this.ctx = ctx
+    this.ctx.colors = getPlanetColors()
     this.planets = generatePlanets(10, 50, ctx, canvas)
     this.ongoingShips = []
     this.halfCommand = null
@@ -60,10 +67,10 @@ export default class Game {
       y: 0
     }
     this.victory = null
-    this.ai = new GameAI(this)
-    this.setOriginPlayerplanets(2)
+    this.dummy = new DummyPlayer(this)
+    this.setOriginPlayerPlanets(2)
   }
-  setOriginPlayerplanets (playerCount) {
+  setOriginPlayerPlanets (playerCount) {
     for (let i = 0; i < playerCount; i++) {
       this.planets[i].number = 50
       this.planets[i].side = i + 1
@@ -76,7 +83,7 @@ export default class Game {
     this.updateOngoingShips()
     this.updateplanets()
 
-    let command = this.ai.perform_frame_turn()
+    let command = this.dummy.performFrameTurn()
     if (command) this.executeCommand(command)
   }
 
@@ -119,6 +126,7 @@ export default class Game {
     this.ongoingShips = remainingShips
   }
   render () {
+    this.renderSides()
     this.renderplanets()
     this.renderOngoingShips()
     this.renderHalfCommand()
@@ -146,10 +154,29 @@ export default class Game {
       }
     }
   }
+  renderSides () {
+    this.ctx.fillStyle = this.ctx.colors[1].fill
+    this.ctx.font = '25px Courier'
+    this.ctx.textAlign = 'left'
+    this.ctx.textBaseline = 'middle'
+    this.ctx.fillText('Player', 10, 20)
+
+    this.ctx.fillStyle = COLORS.PINK
+    this.ctx.font = '25px Courier'
+    this.ctx.textAlign = 'left'
+    this.ctx.textBaseline = 'middle'
+    this.ctx.fillText('vs.', 110, 20)
+
+    this.ctx.fillStyle = this.ctx.colors[2].fill
+    this.ctx.font = '25px Courier'
+    this.ctx.textAlign = 'left'
+    this.ctx.textBaseline = 'middle'
+    this.ctx.fillText('Dummy', 160, 20)
+  }
   renderVictory () {
     if (this.victory) {
-      this.ctx.fillStyle = '#FFFF00'
-      this.ctx.font = '57px Arial'
+      this.ctx.fillStyle = COLORS.PURPLE0
+      this.ctx.font = '57px Courier'
       this.ctx.textAlign = 'center'
       this.ctx.textBaseline = 'middle'
       this.ctx.fillText(
@@ -166,7 +193,8 @@ export default class Game {
         command.originIndexes[i],
         command.destIndex,
         this.planets,
-        this.ctx
+        this.ctx,
+        this.canvas
       )
       this.ongoingShips.push(ship)
       s.number /= 2

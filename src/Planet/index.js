@@ -1,9 +1,4 @@
-import {
-  PLANET_COLORS,
-  PLANET_GROW_RATE,
-  SMALL_PLANET_SIZE,
-  BIG_PLANET_SIZE
-} from '../Utils'
+import { PLANET_GROW_RATE, SMALL_PLANET_SIZE, BIG_PLANET_SIZE } from '../Utils'
 
 export default class Planet {
   constructor (place, ctx) {
@@ -25,14 +20,14 @@ export default class Planet {
     if (this.side > 0) this.renderNumber()
   }
   renderBall () {
-    this.ctx.fillStyle = PLANET_COLORS[this.side].back
+    this.ctx.fillStyle = this.ctx.colors[this.side].fill
     this.ctx.beginPath()
     this.ctx.arc(this.place.x, this.place.y, this.computeSize(), 0, 2 * Math.PI)
     this.ctx.fill()
   }
   renderNumber () {
-    this.ctx.fillStyle = PLANET_COLORS[this.side].front
-    this.ctx.font = '27px Arial'
+    this.ctx.fillStyle = this.ctx.colors[this.side].caption
+    this.ctx.font = '20px Courier'
     this.ctx.textAlign = 'center'
     this.ctx.textBaseline = 'middle'
     this.ctx.fillText(Math.floor(this.number), this.place.x, this.place.y)
