@@ -1,10 +1,7 @@
-# Galcon-client
-### Run the project:
+usage: 
 ```
-npm i && npm run start
+npm i
 ```
-
-### Webpack:
 ```
-npm run webpack
+nmp start
 ```
