@@ -92,8 +92,8 @@ export default class Game {
     for (let i = 0; i < this.planets.length; i++) {
       playerDomainCount[this.planets[i].side]++
     }
-    if (playerDomainCount[1] === 0) this.victory = 'You lose'
-    else if (playerDomainCount[2] === 0) this.victory = 'You win'
+    if (playerDomainCount[1] === 0) this.victory = 'Dummy wins'
+    else if (playerDomainCount[2] === 0) this.victory = 'Player wins'
     else this.victory = null
   }
   updateOngoingShips () {
@@ -146,7 +146,7 @@ export default class Game {
     if (this.halfCommand) {
       for (let i = 0; i < this.halfCommand.originIndexes.length; i++) {
         let originPlace = this.planets[this.halfCommand.originIndexes[i]].place
-        this.ctx.strokeStyle = '#FFFFFF'
+        this.ctx.strokeStyle = COLORS.GRAY0
         this.ctx.lineWidth = 1
         this.ctx.moveTo(originPlace.x, originPlace.y)
         this.ctx.lineTo(this.currentMousePlace.x, this.currentMousePlace.y)
