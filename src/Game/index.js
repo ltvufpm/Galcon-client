@@ -81,7 +81,7 @@ export default class Game {
 
     this.updateVictory()
     this.updateOngoingShips()
-    this.updateplanets()
+    this.updatePlanets()
 
     let command = this.dummy.performFrameTurn()
     if (command) this.executeCommand(command)
@@ -101,7 +101,7 @@ export default class Game {
     this.checkShipsArrival()
     this.removeFinishedShips()
   }
-  updateplanets () {
+  updatePlanets () {
     for (let i = 0; i < this.planets.length; i++) {
       this.planets[i].grow()
     }
