@@ -6,7 +6,7 @@ import {
 } from '../Utils'
 
 export default class Ship {
-  constructor (originPlanetIndex, destPlanetIndex, planets, ctx, canvas) {
+  constructor (originPlanetIndex, destPlanetIndex, planets, ctx, canvas, power) {
     const originPlanet = planets[originPlanetIndex]
     this.planets = planets
     this.originIndex = originPlanetIndex
@@ -16,7 +16,7 @@ export default class Ship {
     }
     this.side = originPlanet.side
     this.destIndex = destPlanetIndex
-    this.number = originPlanet.number / 2
+    this.number = originPlanet.number * (originPlanet.side === 1 ? power : 0.5)
     this.ctx = ctx
     this.canvas = canvas
 

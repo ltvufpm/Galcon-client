@@ -68,6 +68,7 @@ export default class Game {
     }
     this.victory = null
     this.dummy = new DummyPlayer(this)
+    this.power = 0.5;
     this.setOriginPlayerPlanets(2)
   }
   setOriginPlayerPlanets (playerCount) {
@@ -131,6 +132,7 @@ export default class Game {
     this.renderOngoingShips()
     this.renderHalfCommand()
     this.renderVictory()
+    this.renderPower()
   }
   renderplanets () {
     for (let i = 0; i < this.planets.length; i++) {
@@ -186,7 +188,21 @@ export default class Game {
       )
     }
   }
+  renderPower () {
+    this.ctx.fillStyle = COLORS.GRAY1
+    this.ctx.font = '25px Courier'
+    this.ctx.textAlign = 'left'
+    this.ctx.textBaseline = 'middle'
+    this.ctx.fillText(`${this.power * 100}%`, 10, 740)
+  }
+  updatePower() {
+    this.power += 0.25;
+    if (this.power > 1) {
+      this.power = 0;
+    }
+  }
   executeCommand (command) {
+    if (!this.power) return;
     for (let i = 0; i < command.originIndexes.length; i++) {
       let s = this.planets[command.originIndexes[i]]
       let ship = new Ship(
@@ -194,15 +210,18 @@ export default class Game {
         command.destIndex,
         this.planets,
         this.ctx,
-        this.canvas
+        this.canvas,
+        this.power
       )
       this.ongoingShips.push(ship)
-      s.number /= 2
+      s.number *= (1 - this.power);
     }
   }
   mouseDown (x, y) {
     if (this.victory) return
-    if (!this.halfCommand) {
+    if (x >= 10 && x <= 70 && y >= 740 && y <= 750) {
+      this.updatePower()
+    } else if (!this.halfCommand) {
       let sIndex = hitPlanet(x, y, this.planets)
       if (sIndex >= 0 && this.planets[sIndex].side === 1) {
         // side 1 is player
