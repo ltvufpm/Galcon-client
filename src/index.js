@@ -1,42 +1,63 @@
 import Game from './Game'
+import Welcome from './Welcome';
 import Timer from './Timer'
 import { COLORS } from './Utils'
 
 window.onload = () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  startMainLoop(canvas, ctx)
+  new Canvas(canvas, ctx);
 }
 
-function addEventListeners (game, canvas) {
-  canvas.addEventListener('mousedown', e =>
-    game.mouseDown(e.offsetX, e.offsetY)
-  )
-  canvas.addEventListener('mouseup', e => game.mouseUp(e.offsetX, e.offsetY))
-  canvas.addEventListener('mousemove', e =>
-    game.mouseMove(e.offsetX, e.offsetY)
-  )
-}
+class Canvas {
+  constructor(canvas, ctx) {
+    this.canvas = document.getElementById('canvas')
+    this.ctx = canvas.getContext('2d')
 
-function startMainLoop (canvas, ctx) {
-  let timer = new Timer(60, 0.05, ctx)
-  let game = new Game(canvas, ctx)
-  addEventListeners(game, canvas)
-  mainLoop(timer, game)
-}
+    this.timer = new Timer(60, 0.05, ctx);
+    this.page = new Welcome(this);
+    this.currentPage = 'welcome';
 
-function clearScreen (canvas, ctx) {
-  ctx.fillStyle = COLORS.BLUE2
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-}
+    this.addEventListeners();
+    this.mainLoop();
+  }
 
-function mainLoop (timer, game) {
-  timer.beginFrame()
-  clearScreen(game.canvas, game.ctx)
-  game.update()
-  game.render()
-  timer.endFrame()
-  setTimeout(() => {
-    mainLoop(timer, game)
-  }, timer.shouldDelay)
+  addEventListeners () {
+    this.canvas.addEventListener('mousedown', e =>
+      this.page.mouseDown(e.offsetX, e.offsetY)
+    )
+    this.canvas.addEventListener('mouseup', e => this.page.mouseUp(e.offsetX, e.offsetY))
+    this.canvas.addEventListener('mousemove', e =>
+      this.page.mouseMove(e.offsetX, e.offsetY)
+    )
+  }
+
+  goToPage(pageId) {
+    if (this.currentPage === pageId) return;
+
+    switch (pageId) {
+      case 'game':
+        this.page = new Game(this);
+        this.currentPage = 'game';
+        break;
+      default:
+        break;
+    }
+  }
+
+  clearScreen() {
+    this.ctx.fillStyle = COLORS.BLUE2
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+
+  mainLoop (timer, page) {
+    this.timer.beginFrame()
+    this.clearScreen()
+    this.page.update()
+    this.page.render()
+    this.timer.endFrame()
+    setTimeout(() => {
+      this.mainLoop()
+    }, this.timer.shouldDelay)
+  }
 }

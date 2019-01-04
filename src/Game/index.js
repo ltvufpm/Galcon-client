@@ -8,6 +8,7 @@ import {
 import Planet from '../Planet'
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
+import Base from '../Base'
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
   function getRandomPlace () {
@@ -54,12 +55,11 @@ function hitPlanet (x, y, planets) {
   return -1
 }
 
-export default class Game {
-  constructor (canvas, ctx) {
-    this.canvas = canvas
-    this.ctx = ctx
+export default class Game extends Base {
+  constructor (parent) {
+    super(parent)
     this.ctx.colors = getPlanetColors()
-    this.planets = generatePlanets(10, 50, ctx, canvas)
+    this.planets = generatePlanets(10, 50, this.ctx, this.canvas)
     this.ongoingShips = []
     this.halfCommand = null
     this.currentMousePlace = {

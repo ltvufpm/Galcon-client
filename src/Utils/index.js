@@ -7,7 +7,7 @@ export function randBetween (lo, hi) {
   return Math.floor(lo + Math.random() * (hi - lo))
 }
 export const COLORS = {
-  RED: '#FF0000',
+  RED: '#d31f31',
   RED0: '#FF4444',
   ORANGE: '#ffaa22',
   YELLOW: '#FFFF00',
@@ -39,6 +39,8 @@ export const PLAYER_COLOR_PAIRS = [
 export const PLANET_SIZE = 25
 export const BIG_PLANET_SIZE = 60
 export const SMALL_PLANET_SIZE = 25
+export const SCREEN_HEIGHT = 768
+export const SCREEN_WIDTH = 1024
 
 export function getPlanetColors () {
   const pair = PLAYER_COLOR_PAIRS[randBetween(0, 2)]
@@ -62,3 +64,7 @@ export function getPlanetColors () {
 }
 export const PLANET_GROW_RATE = 0.03
 export const ONGOING_SHIPS_SPEED = 0.8
+
+export function isPointInsideArea(point, area) {
+  return point.x >= area[0].x && point.x <= area[1].x && point.y >= area[0].y && point.y <= area[1].y
+}
