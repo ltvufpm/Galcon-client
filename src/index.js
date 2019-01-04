@@ -6,17 +6,16 @@ import { COLORS } from './Utils'
 window.onload = () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  new Canvas(canvas, ctx);
+  new Canvas(canvas, ctx, 'game');
 }
 
 class Canvas {
-  constructor(canvas, ctx) {
+  constructor(canvas, ctx, defaultPageId) {
     this.canvas = document.getElementById('canvas')
     this.ctx = canvas.getContext('2d')
 
     this.timer = new Timer(60, 0.05, ctx);
-    this.page = new Welcome(this);
-    this.currentPage = 'welcome';
+    this.goToPage(defaultPageId);
 
     this.addEventListeners();
     this.mainLoop();
@@ -32,14 +31,17 @@ class Canvas {
     )
   }
 
-  goToPage(pageId) {
-    if (this.currentPage === pageId) return;
+  goToPage(pageId, force = false) {
+    if (!force && this.currentPage === pageId) return;
 
     switch (pageId) {
       case 'game':
         this.page = new Game(this);
         this.currentPage = 'game';
         break;
+      case 'welcome':
+        this.page = new Welcome(this);
+        this.currentPage = 'welcome';
       default:
         break;
     }

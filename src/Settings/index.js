@@ -10,7 +10,7 @@ import Base from '../Base';
 const ww = SCREEN_WIDTH / 2;
 const wh = SCREEN_HEIGHT / 2;
 
-export default class Welcome extends Base {
+export default class Settings extends Base {
   constructor (parent) {
     super(parent);
 
@@ -28,8 +28,7 @@ export default class Welcome extends Base {
       startGameBtn: this.handleStartGameBtnHover.bind(this)
     };
 
-    this.startButtonColor = COLORS.RED;
-    this.isStartBtnHover = false;
+    this.startButtonColor = false;
   }
 
   render() {
@@ -37,17 +36,26 @@ export default class Welcome extends Base {
     this.renderStartButton();
   }
 
-  update() {}
+  update() {
+  }
 
   mouseUp(x, y) {
-    super.mouseUp(x, y);
+    for (const key in this.breackpoints) {
+      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
+        if (this.mouseUpHandlers[key]) this.mouseUpHandlers[key]();
+        return;
+      }
+    }
   }
 
   mouseMove(x, y) {
-    if (!super.mouseMove(x, y)) {
-      this.startButtonColor = COLORS.RED;
-      this.isStartBtnHover = false;
+    for (const key in this.breackpoints) {
+      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
+        if (this.mouseMoveHandlers[key]) this.mouseMoveHandlers[key]();
+        return;
+      }
     }
+    this.isStartHover = false;
   }
 
   handleStartGameBtnPressed() {
@@ -55,15 +63,7 @@ export default class Welcome extends Base {
   }
 
   handleStartGameBtnHover() {
-    const { RED, BLUE2, ...colors } = COLORS;
-
-    if (!this.isStartBtnHover) {
-      const keys  = Object.keys(colors);
-      const index = Math.round(Math.random() * (keys.length - 1));
-      
-      this.startButtonColor = COLORS[keys[index]];
-      this.isStartBtnHover = true;
-    }
+    this.isStartHover = true;
   }
 
   renderLogo() {
@@ -80,7 +80,7 @@ export default class Welcome extends Base {
   }
 
   renderStartButton() {
-    this.ctx.fillStyle = this.startButtonColor;
+    this.ctx.fillStyle = this.isStartHover ? COLORS.ORANGE : COLORS.RED
     this.ctx.fillRect(ww - 100, wh + 200, 200, 70)
 
     const textWidth = this.ctx.measureText('START GAME').width

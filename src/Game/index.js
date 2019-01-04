@@ -3,12 +3,14 @@ import {
   euclidDist,
   PLANET_SIZE,
   getPlanetColors,
-  COLORS
+  COLORS,
+  SCREEN_WIDTH
 } from '../Utils'
 import Planet from '../Planet'
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 import Base from '../Base'
+import Touchable from '../Touchable'
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
   function getRandomPlace () {
@@ -70,12 +72,26 @@ export default class Game extends Base {
     this.dummy = new DummyPlayer(this)
     this.power = 0.5;
     this.setOriginPlayerPlanets(2)
+
+    this.touchables = [
+      new Touchable(this.ctx, SCREEN_WIDTH - 100, 5, 'cogs', this.handleCogsClicked.bind(this)),
+      new Touchable(this.ctx, SCREEN_WIDTH - 50, 8, 'redo', this.handleRedoClicked.bind(this), 25)
+    ];
   }
   setOriginPlayerPlanets (playerCount) {
     for (let i = 0; i < playerCount; i++) {
       this.planets[i].number = 50
       this.planets[i].side = i + 1
     }
+  }
+  handleCogsClicked() {
+    this.parent.goToPage('welcome');
+  }
+  handleRedoClicked() {
+    this.parent.goToPage('game', true);
+  }
+  renderManagementPanel() {
+    for (const touchable of this.touchables) touchable.draw();
   }
   update () {
     if (this.victory) return
@@ -133,6 +149,7 @@ export default class Game extends Base {
     this.renderHalfCommand()
     this.renderVictory()
     this.renderPower()
+    this.renderManagementPanel()
   }
   renderplanets () {
     for (let i = 0; i < this.planets.length; i++) {
@@ -232,6 +249,7 @@ export default class Game extends Base {
     }
   }
   mouseUp (x, y) {
+    for (const touchable of this.touchables) touchable.onMouseUp(x, y);
     if (this.victory) return
 
     if (this.halfCommand) {
@@ -263,6 +281,7 @@ export default class Game extends Base {
     }
   }
   mouseMove (x, y) {
+    for (const touchable of this.touchables) touchable.onMouseMove(x, y);
     if (this.victory) return
 
     this.currentMousePlace = {
