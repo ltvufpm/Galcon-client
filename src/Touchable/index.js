@@ -1,19 +1,12 @@
 import {
-    isPointInsideArea
+    isPointInsideArea, COLORS
 } from '../Utils';
 
-export default class Touchable {
-    constructor(ctx, x, y, img, onClick, size = 30) {
-        this.elem = document.getElementById(img)
-        this.elemHover = document.getElementById(`${img}-hover`);
+class Touchable {
+    constructor(ctx, area, onClick) {
         this.ctx = ctx;
-        this.x = x;
-        this.y = y;
+        this.area = area;
         this.onClick = onClick;
-
-        this.area = [
-            { x, y }, { x: x + size, y: y + size }
-        ];
 
         this.isHover = false;
     }
@@ -32,11 +25,70 @@ export default class Touchable {
         }
     }
 
+    onMouseDown(x, y) {}
+
     get() {
         return this.isHover ? this.elemHover : this.elem;
     }
 
+    draw() {}
+}
+
+export class TouchableImage extends Touchable {
+    constructor(ctx, x, y, img, onClick, size = 30) {
+        const area = [ { x, y }, { x: x + size, y: y + size } ];
+
+        super(ctx, area, onClick);
+        this.elem = document.getElementById(img)
+        this.elemHover = document.getElementById(`${img}-hover`);
+    }
+
     draw() {
-        this.ctx.drawImage(this.get(), this.x, this.y);
+        this.ctx.drawImage(this.get(), this.area[0].x, this.area[0].y);
+    }
+}
+
+export class TouchableRect extends Touchable {
+    constructor(ctx, x, y, w, h, text, onClick) {
+        const area = [ { x, y }, { x: x + w, y: y + h } ];
+
+        super(ctx, area, onClick);
+        this.elem = COLORS.RED
+        this.elemHover = COLORS.ORANGE
+        this.text = text;
+        this.width = w;
+        this.height = h;
+    }
+
+    onMouseMove(x, y) {
+        let flag = !this.isHover;
+        super.onMouseMove(x, y);
+        
+        flag = flag && this.isHover;
+
+        if (flag) {
+            const { RED, BLUE2, WHITE, ...colors } = COLORS;
+            const keys  = Object.keys(colors);
+            const index = Math.round(Math.random() * (keys.length - 1));
+            
+            this.elemHover = COLORS[keys[index]];
+        }
+    }
+
+    draw() {
+        this.ctx.fillStyle = this.get();
+
+        this.ctx.fillRect(
+            this.area[0].x, this.area[0].y,
+            this.width, this.height
+        )
+
+        const textWidth = this.ctx.measureText(this.text).width
+
+        this.ctx.fillStyle = COLORS.WHITE
+        this.ctx.font = '25px Courier'
+        this.ctx.textAlign = 'left'
+        this.ctx.textBaseline = 'middle'
+        this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
     }
 }

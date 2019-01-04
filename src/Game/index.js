@@ -10,7 +10,7 @@ import Planet from '../Planet'
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 import Base from '../Base'
-import Touchable from '../Touchable'
+import { TouchableImage } from '../Touchable'
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
   function getRandomPlace () {
@@ -74,8 +74,9 @@ export default class Game extends Base {
     this.setOriginPlayerPlanets(2)
 
     this.touchables = [
-      new Touchable(this.ctx, SCREEN_WIDTH - 100, 5, 'cogs', this.handleCogsClicked.bind(this)),
-      new Touchable(this.ctx, SCREEN_WIDTH - 50, 8, 'redo', this.handleRedoClicked.bind(this), 25)
+      new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
+      new TouchableImage(this.ctx, SCREEN_WIDTH - 80, 8, 'redo', this.handleRedoClicked.bind(this), 25),
+      new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this))
     ];
   }
   setOriginPlayerPlanets (playerCount) {
@@ -84,11 +85,12 @@ export default class Game extends Base {
       this.planets[i].side = i + 1
     }
   }
-  handleCogsClicked() {
-    this.parent.goToPage('welcome');
-  }
+  handleCogsClicked() {}
   handleRedoClicked() {
     this.parent.goToPage('game', true);
+  }
+  handleSignOutClicked() {
+    this.parent.goToPage('welcome');
   }
   renderManagementPanel() {
     for (const touchable of this.touchables) touchable.draw();
@@ -235,6 +237,7 @@ export default class Game extends Base {
     }
   }
   mouseDown (x, y) {
+    super.mouseDown(x, y);
     if (this.victory) return
     if (x >= 10 && x <= 70 && y >= 740 && y <= 750) {
       this.updatePower()
@@ -249,7 +252,7 @@ export default class Game extends Base {
     }
   }
   mouseUp (x, y) {
-    for (const touchable of this.touchables) touchable.onMouseUp(x, y);
+    super.mouseUp(x, y);
     if (this.victory) return
 
     if (this.halfCommand) {
@@ -281,7 +284,7 @@ export default class Game extends Base {
     }
   }
   mouseMove (x, y) {
-    for (const touchable of this.touchables) touchable.onMouseMove(x, y);
+    super.mouseMove(x, y);
     if (this.victory) return
 
     this.currentMousePlace = {

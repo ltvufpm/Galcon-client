@@ -12,41 +12,24 @@ export default class Base {
         this.mouseUpHandlers = {};
         this.mouseMoveHandlers = {};
         this.mouseDownHandlers = {};
+
+        this.touchables = [];
     }
 
-    render() {}
+    render() {
+        for (const touchable of this.touchables) touchable.draw();
+    }
     update() {}
 
     mouseDown(x, y) {
-        for (const key in this.breackpoints) {
-            if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-              if (this.mouseDownHandlers[key]) this.mouseDownHandlers[key]();
-              return true;
-            }
-        }
-
-        return false;
+        for (const touchable of this.touchables) touchable.onMouseDown(x, y);
     }
 
     mouseUp(x, y) {
-        for (const key in this.breackpoints) {
-            if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-              if (this.mouseUpHandlers[key]) this.mouseUpHandlers[key]();
-              return true;
-            }
-        }
-
-        return false;
+        for (const touchable of this.touchables) touchable.onMouseUp(x, y);
     }
 
     mouseMove(x, y) {
-        for (const key in this.breackpoints) {
-            if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-                if (this.mouseMoveHandlers[key]) this.mouseMoveHandlers[key]();
-                return true;
-            }
-        }
-
-        return false;
+        for (const touchable of this.touchables) touchable.onMouseMove(x, y);
     }
 }
