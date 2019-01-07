@@ -2,7 +2,7 @@ import {
     isPointInsideArea, COLORS
 } from '../Utils';
 
-class Touchable {
+export class Touchable {
     constructor(ctx, area, onClick) {
         this.ctx = ctx;
         this.area = area;
@@ -26,6 +26,8 @@ class Touchable {
     }
 
     onMouseDown(x, y) {}
+
+    onKeyDown() {}
 
     get() {
         return this.isHover ? this.elemHover : this.elem;
