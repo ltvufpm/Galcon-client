@@ -8,11 +8,6 @@ export default class Base {
         this.ctx = parent.ctx
         this.parent = parent
 
-        this.breackpoints = {};
-        this.mouseUpHandlers = {};
-        this.mouseMoveHandlers = {};
-        this.mouseDownHandlers = {};
-
         this.touchables = [];
     }
 
@@ -21,12 +16,8 @@ export default class Base {
     }
     update() {}
 
-    mouseDown(x, y) {
-        for (const touchable of this.touchables) touchable.onMouseDown(x, y);
-    }
-
-    mouseUp(x, y) {
-        for (const touchable of this.touchables) touchable.onMouseUp(x, y);
+    mouseClick(x, y) {
+        for (const touchable of this.touchables) touchable.onMouseClick(x, y);
     }
 
     mouseMove(x, y) {

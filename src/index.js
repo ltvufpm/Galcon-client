@@ -11,8 +11,8 @@ window.onload = () => {
 
 class Canvas {
   constructor(canvas, ctx, defaultPageId) {
-    this.canvas = document.getElementById('canvas')
-    this.ctx = canvas.getContext('2d')
+    this.canvas = document.getElementById('canvas');
+    this.ctx = ctx;
 
     this.timer = new Timer(60, 0.05, ctx);
     this.goToPage(defaultPageId);
@@ -22,13 +22,11 @@ class Canvas {
   }
 
   addEventListeners () {
-    this.canvas.addEventListener('mousedown', e =>
-      this.page.mouseDown(e.offsetX, e.offsetY)
-    )
-    this.canvas.addEventListener('mouseup', e => this.page.mouseUp(e.offsetX, e.offsetY))
+    this.canvas.addEventListener('click', e => this.page.mouseClick(e.offsetX, e.offsetY))
     this.canvas.addEventListener('mousemove', e =>
       this.page.mouseMove(e.offsetX, e.offsetY)
-    )
+    );
+    this.canvas.addEventListener('dblclick', e => this.page.mouseDoubleClick(e.offsetX, e.offsetY))
   }
 
   goToPage(pageId, force = false) {
@@ -52,7 +50,7 @@ class Canvas {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  mainLoop (timer, page) {
+  mainLoop () {
     this.timer.beginFrame()
     this.clearScreen()
     this.page.update()

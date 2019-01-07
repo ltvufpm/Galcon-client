@@ -1,73 +1,24 @@
 import {
-  randBetween,
   euclidDist,
   PLANET_SIZE,
   getPlanetColors,
   COLORS,
-  SCREEN_WIDTH
+  SCREEN_WIDTH,
+  isPointInsideCircle
 } from '../Utils'
-import Planet from '../Planet'
+import { PlanetManager } from '../Planet/PlanetManager';
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 import Base from '../Base'
 import { TouchableImage } from '../Touchable'
 
-function generatePlanets (count, distanceTolerance, ctx, canvas) {
-  function getRandomPlace () {
-    let t = distanceTolerance
-    return {
-      x: randBetween(t, canvas.width - t),
-      y: randBetween(t, canvas.height - t)
-    }
-  }
-
-  function isReasonablePlanetPlace (place) {
-    for (let i = 0; i < planets.length; i++) {
-      let distance = euclidDist(planets[i].place, place)
-      if (distance < distanceTolerance * 2) return false
-    }
-    return true
-  }
-
-  function getNewPlanet () {
-    let place = getRandomPlace()
-    while (!isReasonablePlanetPlace(place)) {
-      place = getRandomPlace()
-    }
-    return new Planet(place, ctx)
-  }
-
-  let planets = []
-  for (let i = 0; i < count; i++) {
-    planets.push(getNewPlanet())
-  }
-  return planets
-}
-
-function hitPlanet (x, y, planets) {
-  let mousePlace = {
-    x: x,
-    y: y
-  }
-  for (let i = 0; i < planets.length; i++) {
-    if (euclidDist(mousePlace, planets[i].place) < PLANET_SIZE) {
-      return i
-    }
-  }
-  return -1
-}
-
 export default class Game extends Base {
   constructor (parent) {
     super(parent)
     this.ctx.colors = getPlanetColors()
-    this.planets = generatePlanets(10, 50, this.ctx, this.canvas)
-    this.ongoingShips = []
-    this.halfCommand = null
-    this.currentMousePlace = {
-      x: 0,
-      y: 0
-    }
+    this.planets = PlanetManager.generatePlanets(10, 50, this.ctx, this.canvas)
+    this.ongoingShips = [];
+    this.fromPlanets = [];
     this.victory = null
     this.dummy = new DummyPlayer(this)
     this.power = 0.5;
@@ -76,7 +27,7 @@ export default class Game extends Base {
     this.touchables = [
       new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
       new TouchableImage(this.ctx, SCREEN_WIDTH - 80, 8, 'redo', this.handleRedoClicked.bind(this), 25),
-      new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this))
+      new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this)),
     ];
   }
   setOriginPlayerPlanets (playerCount) {
@@ -148,7 +99,7 @@ export default class Game extends Base {
     this.renderSides()
     this.renderplanets()
     this.renderOngoingShips()
-    this.renderHalfCommand()
+    // this.renderHalfCommand()
     this.renderVictory()
     this.renderPower()
     this.renderManagementPanel()
@@ -163,18 +114,7 @@ export default class Game extends Base {
       this.ongoingShips[i].render()
     }
   }
-  renderHalfCommand () {
-    if (this.halfCommand) {
-      for (let i = 0; i < this.halfCommand.originIndexes.length; i++) {
-        let originPlace = this.planets[this.halfCommand.originIndexes[i]].place
-        this.ctx.strokeStyle = COLORS.GRAY0
-        this.ctx.lineWidth = 1
-        this.ctx.moveTo(originPlace.x, originPlace.y)
-        this.ctx.lineTo(this.currentMousePlace.x, this.currentMousePlace.y)
-        this.ctx.stroke()
-      }
-    }
-  }
+
   renderSides () {
     this.ctx.fillStyle = this.ctx.colors[1].fill
     this.ctx.font = '25px Courier'
@@ -236,71 +176,61 @@ export default class Game extends Base {
       s.number *= (1 - this.power);
     }
   }
-  mouseDown (x, y) {
-    super.mouseDown(x, y);
-    if (this.victory) return
-    if (x >= 10 && x <= 70 && y >= 740 && y <= 750) {
-      this.updatePower()
-    } else if (!this.halfCommand) {
-      let sIndex = hitPlanet(x, y, this.planets)
-      if (sIndex >= 0 && this.planets[sIndex].side === 1) {
-        // side 1 is player
-        this.halfCommand = {
-          originIndexes: [sIndex]
-        }
-      }
+
+  mouseClick (x, y) {
+    super.mouseClick(x, y);
+
+    const selectedPlanet = this.getPlanetByPoint(x, y);
+
+    if(!selectedPlanet) return;
+
+    if(selectedPlanet.side !== 1) {
+      if(this.fromPlanets.length === 0) return;
+
+      return this.attach(selectedPlanet);
     }
+
+    if(selectedPlanet.isSelected) {
+      selectedPlanet.unSelect();
+      this.fromPlanets = this.fromPlanets.filter(p => p.id !== selectedPlanet.id);
+
+      return;
+    }
+
+    selectedPlanet.select();
+    this.fromPlanets = this.fromPlanets.concat(selectedPlanet);
   }
-  mouseUp (x, y) {
-    super.mouseUp(x, y);
-    if (this.victory) return
 
-    if (this.halfCommand) {
-      let sIndex = hitPlanet(x, y, this.planets)
-      let originIndexes = this.halfCommand.originIndexes
-      if (sIndex >= 0 && originIndexes.indexOf(sIndex) < 0) {
-        // execute half command to attack alien planet
-        let command = {
-          originIndexes: originIndexes,
-          destIndex: sIndex
-        }
-        this.executeCommand(command)
-        this.halfCommand = null
-      } else if (
-        sIndex >= 0 &&
-        originIndexes.indexOf(sIndex) === originIndexes.length - 1
-      ) {
-        // execute half command to reinforce own planet
-        let command = {
-          originIndexes: originIndexes.slice(0, originIndexes.length - 1),
-          destIndex: sIndex
-        }
-        this.executeCommand(command)
-        this.halfCommand = null
-      } else {
-        // cancel halfCommand
-        this.halfCommand = null
-      }
-    }
+  mouseDoubleClick(x, y) {
+    const selectedPlanet = this.getPlanetByPoint(x, y);
+
+    if(!selectedPlanet || selectedPlanet.side !== 1) return;
+
+    this.fromPlanets = this.planets.filter(p => p.side === 1);
+    this.fromPlanets.forEach(p => p.select());
   }
-  mouseMove (x, y) {
-    super.mouseMove(x, y);
-    if (this.victory) return
 
-    this.currentMousePlace = {
-      x: x,
-      y: y
-    }
+  attach(destPlanet) {
+    if (this.victory) return;
 
-    if (this.halfCommand) {
-      let sIndex = hitPlanet(x, y, this.planets)
-      if (
-        sIndex >= 0 &&
-        this.planets[sIndex].side === 1 && // side 1 is player
-        this.halfCommand.originIndexes.indexOf(sIndex) < 0
-      ) {
-        this.halfCommand.originIndexes.push(sIndex)
-      }
-    }
+    const planetIds = this.planets.map(p => p.id);
+
+    const originIndexes = this.fromPlanets
+      .map(p => planetIds.indexOf(p.id));
+    const destIndex = planetIds.indexOf(destPlanet.id);
+
+    this.executeCommand({
+      originIndexes,
+      destIndex
+    });
+
+    this.fromPlanets.forEach(p => p.unSelect());
+    this.fromPlanets = [];
+  }
+
+  getPlanetByPoint(x, y) {
+    const planets = this.planets.filter(planet => isPointInsideCircle({x, y}, planet.place, planet.computeSize()));
+
+    return planets.length > 0 && planets[0];
   }
 }

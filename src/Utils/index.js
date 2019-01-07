@@ -68,3 +68,7 @@ export const ONGOING_SHIPS_SPEED = 0.8
 export function isPointInsideArea(point, area) {
   return point.x >= area[0].x && point.x <= area[1].x && point.y >= area[0].y && point.y <= area[1].y
 }
+
+export function isPointInsideCircle(point, circlePlace, radius) {
+  return Math.sqrt((point.x-circlePlace.x) ** 2 + (point.y - circlePlace.y) ** 2) < radius;
+}

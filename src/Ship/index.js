@@ -96,6 +96,7 @@ export default class Ship {
           // invasion win
           dest.number = this.number - dest.number
           dest.side = this.side
+          dest.unSelect();
         } else {
           // defense win
           dest.number -= this.number
