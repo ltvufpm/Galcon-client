@@ -32,4 +32,8 @@ export default class Base {
     mouseMove(x, y) {
         for (const touchable of this.touchables) touchable.onMouseMove(x, y);
     }
+
+    keyDown(code, key) {
+        for (const touchable of this.touchables) touchable.onKeyDown(code, key);
+    }
 }

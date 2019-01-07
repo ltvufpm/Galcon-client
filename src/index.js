@@ -1,12 +1,13 @@
 import Game from './Game'
 import Welcome from './Welcome';
+import Settings from './Settings';
 import Timer from './Timer'
 import { COLORS } from './Utils'
 
 window.onload = () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  new Canvas(canvas, ctx, 'game');
+  new Canvas(canvas, ctx, 'settings');
 }
 
 class Canvas {
@@ -22,13 +23,10 @@ class Canvas {
   }
 
   addEventListeners () {
-    this.canvas.addEventListener('mousedown', e =>
-      this.page.mouseDown(e.offsetX, e.offsetY)
-    )
+    this.canvas.addEventListener('mousedown', e => this.page.mouseDown(e.offsetX, e.offsetY))
     this.canvas.addEventListener('mouseup', e => this.page.mouseUp(e.offsetX, e.offsetY))
-    this.canvas.addEventListener('mousemove', e =>
-      this.page.mouseMove(e.offsetX, e.offsetY)
-    )
+    this.canvas.addEventListener('mousemove', e => this.page.mouseMove(e.offsetX, e.offsetY))
+    window.addEventListener('keydown', e => this.page.keyDown(e.keyCode, e.key));
   }
 
   goToPage(pageId, force = false) {
@@ -42,6 +40,9 @@ class Canvas {
       case 'welcome':
         this.page = new Welcome(this);
         this.currentPage = 'welcome';
+      case 'settings':
+        this.page = new Settings(this);
+        this.currentPage = 'settings';
       default:
         break;
     }

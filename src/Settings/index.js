@@ -5,7 +5,10 @@ import {
   isPointInsideArea
 } from '../Utils';
 
+import Input from '../Input';
+
 import Base from '../Base';
+import { TouchableRect } from '../Touchable';
 
 const ww = SCREEN_WIDTH / 2;
 const wh = SCREEN_HEIGHT / 2;
@@ -14,61 +17,31 @@ export default class Settings extends Base {
   constructor (parent) {
     super(parent);
 
-    this.breackpoints = {
-      startGameBtn : [
-        { x:412, y:584 }, { x:612, y:654 }
-      ]
-    };
+    this.playerName = localStorage.getItem('playerName') || 'Player';
 
-    this.mouseUpHandlers = {
-      startGameBtn: this.handleStartGameBtnPressed.bind(this)
-    };
-
-    this.mouseMoveHandlers = {
-      startGameBtn: this.handleStartGameBtnHover.bind(this)
-    };
-
-    this.startButtonColor = false;
+    this.touchables = [
+      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'Settings', this.handleStartGameBtnPressed.bind(this)),
+      new Input(this.ctx, 'center', 250, 'Name: ', this.playerName, this.handleSavePlayerName.bind(this))
+    ];
   }
 
   render() {
     this.renderLogo();
-    this.renderStartButton();
+    for (const touchable of this.touchables) touchable.draw();
   }
 
-  update() {
-  }
-
-  mouseUp(x, y) {
-    for (const key in this.breackpoints) {
-      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-        if (this.mouseUpHandlers[key]) this.mouseUpHandlers[key]();
-        return;
-      }
-    }
-  }
-
-  mouseMove(x, y) {
-    for (const key in this.breackpoints) {
-      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-        if (this.mouseMoveHandlers[key]) this.mouseMoveHandlers[key]();
-        return;
-      }
-    }
-    this.isStartHover = false;
+  handleSavePlayerName(name) {
+    this.playerName = name;
+    localStorage.setItem('playerName', name);
   }
 
   handleStartGameBtnPressed() {
     this.parent.goToPage('game');
   }
 
-  handleStartGameBtnHover() {
-    this.isStartHover = true;
-  }
-
   renderLogo() {
     const logo = document.getElementById('logo')
-    this.ctx.drawImage(logo, ww - 93, wh - 56);
+    this.ctx.drawImage(logo, ww - 93, 56);
   }
 
   renderNameInput() {
@@ -77,18 +50,5 @@ export default class Settings extends Base {
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
     this.ctx.fillText('Name', ww,  wh)
-  }
-
-  renderStartButton() {
-    this.ctx.fillStyle = this.isStartHover ? COLORS.ORANGE : COLORS.RED
-    this.ctx.fillRect(ww - 100, wh + 200, 200, 70)
-
-    const textWidth = this.ctx.measureText('START GAME').width
-
-    this.ctx.fillStyle = COLORS.WHITE
-    this.ctx.font = '25px Courier'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('START GAME', ww - textWidth/2, wh + 235)
   }
 }

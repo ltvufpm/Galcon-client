@@ -75,6 +75,7 @@ export default class Game extends Base {
     this.dummy = new DummyPlayer(this)
     this.power = 0.5;
     this.setOriginPlayerPlanets(2)
+    this.playerName = localStorage.getItem('playerName') || 'Player';
 
     this.touchables = [
       new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
@@ -89,12 +90,14 @@ export default class Game extends Base {
       this.planets[i].side = i + 1
     }
   }
-  handleCogsClicked() {}
   handleRedoClicked() {
     this.parent.goToPage('game', true);
   }
   handleSignOutClicked() {
     this.parent.goToPage('welcome');
+  }
+  handleCogsClicked() {
+    this.parent.goToPage('settings');
   }
   renderManagementPanel() {
     for (const touchable of this.touchables) touchable.draw();
@@ -179,23 +182,26 @@ export default class Game extends Base {
     }
   }
   renderSides () {
+    let tw = this.ctx.measureText(this.playerName).width;
     this.ctx.fillStyle = this.ctx.colors[1].fill
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('Player', 10, 20)
+    this.ctx.fillText(this.playerName, 10, 20)
 
     this.ctx.fillStyle = COLORS.PINK
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('vs.', 110, 20)
+    this.ctx.fillText('vs.', tw + 20, 20)
+
+    tw += this.ctx.measureText('vs.').width;
 
     this.ctx.fillStyle = this.ctx.colors[2].fill
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('Dummy', 160, 20)
+    this.ctx.fillText('Dummy', tw + 25, 20)
   }
   renderVictory () {
     if (this.victory) {
