@@ -54,7 +54,7 @@ export default class Input extends Touchable {
 
     setIsActive(isActive) {
         this.isActive = isActive;
-        if (!isActive) {
+        if (!isActive && this.value !== this.currentValue) {
             this.onSubmit(this.value);
         } else {
             this.currentValue = this.value;

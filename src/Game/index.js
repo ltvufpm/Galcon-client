@@ -4,7 +4,8 @@ import {
   PLANET_SIZE,
   getPlanetColors,
   COLORS,
-  SCREEN_WIDTH
+  SCREEN_WIDTH,
+  POWER_VALUES
 } from '../Utils'
 import Planet from '../Planet'
 import DummyPlayer from '../DummyPlayer'
@@ -14,6 +15,7 @@ import {
   TouchableImage,
   TouchableText
 } from '../Touchable'
+import User from '../User';
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
   function getRandomPlace () {
@@ -63,8 +65,7 @@ function hitPlanet (x, y, planets) {
 export default class Game extends Base {
   constructor (parent) {
     super(parent)
-    const planetColor = localStorage.getItem('planetColor') || 0;
-    this.ctx.colors = getPlanetColors(planetColor)
+    this.ctx.colors = getPlanetColors(User.planetColor)
     this.planets = generatePlanets(10, 50, this.ctx, this.canvas)
     this.ongoingShips = []
     this.halfCommand = null
@@ -73,10 +74,10 @@ export default class Game extends Base {
       y: 0
     }
     this.victory = null
-    this.dummy = new DummyPlayer(this)
-    this.power = 0.5;
+    this.dummy = new DummyPlayer(this);
+    this.powerIndex = User.power;
+    this.power = POWER_VALUES[this.powerIndex];
     this.setOriginPlayerPlanets(2)
-    this.playerName = localStorage.getItem('playerName') || 'Player';
 
     this.touchables = [
       new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
@@ -120,7 +121,7 @@ export default class Game extends Base {
       playerDomainCount[this.planets[i].side]++
     }
     if (playerDomainCount[1] === 0) this.victory = 'Dummy wins'
-    else if (playerDomainCount[2] === 0) this.victory = 'Player wins'
+    else if (playerDomainCount[2] === 0) this.victory = `${User.playerName} wins`
     else this.victory = null
   }
   updateOngoingShips () {
@@ -183,12 +184,12 @@ export default class Game extends Base {
     }
   }
   renderSides () {
-    let tw = this.ctx.measureText(this.playerName).width;
+    let tw = this.ctx.measureText(User.playerName).width;
     this.ctx.fillStyle = this.ctx.colors[1].fill
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText(this.playerName, 10, 20)
+    this.ctx.fillText(User.playerName, 10, 20)
 
     this.ctx.fillStyle = COLORS.PINK
     this.ctx.font = '25px Courier'
@@ -218,10 +219,9 @@ export default class Game extends Base {
     }
   }
   updatePower() {
-    this.power += 0.25;
-    if (this.power > 1) {
-      this.power = 0;
-    }
+    this.powerIndex += 1;
+    if (this.powerIndex >= POWER_VALUES.length) this.powerIndex = 0;
+    this.power = POWER_VALUES[this.powerIndex];
     this.touchables[3].setText(`${this.power * 100}%`);
   }
   executeCommand (command) {

@@ -32,7 +32,9 @@ export const COLORS = {
 
 export const PLANET_COLORS = [
   '#d31f31', '#ffaa22', '#FFFF00', '#00cc00', '#2222DD', '#8888FF', '#FF00FF', '#990099', '#ff0055', 'rnd'
-]
+];
+
+export const POWER_VALUES = [ 0, 0.25, 0.5, 0.75, 1];
 
 export const PLAYER_COLOR_PAIRS = [
   [COLORS.RED0, COLORS.BLUE3],
