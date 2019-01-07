@@ -66,7 +66,7 @@ export default class Game extends Base {
   constructor (parent) {
     super(parent)
     this.ctx.colors = getPlanetColors(User.planetColor)
-    this.planets = generatePlanets(10, 50, this.ctx, this.canvas)
+    this.planets = generatePlanets(User.getPlanetsCount(), 50, this.ctx, this.canvas)
     this.ongoingShips = []
     this.halfCommand = null
     this.currentMousePlace = {

@@ -35,6 +35,12 @@ export const PLANET_COLORS = [
 ];
 
 export const POWER_VALUES = [ 0, 0.25, 0.5, 0.75, 1];
+export const PLANETS_COUNT = [ 3, 4, 5, 10, 15, 20 ];
+export const SPEED = {
+  slow: 0.5,
+  normal: 0.8,
+  fast: 1.2
+}
 
 export const PLAYER_COLOR_PAIRS = [
   [COLORS.RED0, COLORS.BLUE3],

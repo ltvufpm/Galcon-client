@@ -1,7 +1,7 @@
 import { COLORS, SCREEN_WIDTH } from '../Utils';
 
 export default class Selector {
-    constructor(ctx, label, x, y, data, selectedIndex = 0, onSelect) {
+    constructor(ctx, label, x, y, data, selectedIndex = 0, onSelect, width = 60) {
         this.ctx = ctx;
         this.label = label;
         this.x = x;
@@ -9,6 +9,7 @@ export default class Selector {
         this.selectedIndex = selectedIndex;
         this.onSelect = onSelect;
         this.items = [];
+        this.width = width;
         this.initItems(data);
     }
 

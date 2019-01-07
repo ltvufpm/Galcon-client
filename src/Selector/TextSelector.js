@@ -40,9 +40,12 @@ class TextItem extends TouchableRect {
 
 export default class TextSelector extends Selector {
     initItems(data) {
-        const width = 60;
+        const width = this.width;
         const height = 35;
         const itemsInRow = Math.floor(300 / width);
+
+        console.log(this.width);
+        
 
         this.items = data.map((item, i) => new TextItem(
             this.ctx,
@@ -50,7 +53,7 @@ export default class TextSelector extends Selector {
             this.y + Math.floor(i / itemsInRow) * height,
             width - 10,
             height - 10,
-            `${item * 100}%`,
+            item,
             i,
             this.onItemSelected.bind(this)
         ));

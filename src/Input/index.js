@@ -1,18 +1,12 @@
-import { COLORS, SCREEN_WIDTH, isPointInsideArea } from '../Utils';
+import { COLORS, isPointInsideArea } from '../Utils';
 
 import { Touchable } from '../Touchable';
 
 export default class Input extends Touchable {
     constructor(ctx, x, y, label, value, onSubmit) {
-        const tw = ctx.measureText(label).width;
-
-        if (x === 'center') {
-            x = (SCREEN_WIDTH - 300 - tw) / 2;
-        }
         const area = [
-            {x, y: y-20}, {x: x+tw+300, y: y+20}
+            {x, y: y-20}, {x: x+300, y: y+20}
         ];
-
         super(ctx, area)
         
         this.ctx = ctx;
@@ -54,7 +48,7 @@ export default class Input extends Touchable {
 
     setIsActive(isActive) {
         this.isActive = isActive;
-        if (!isActive && this.value !== this.currentValue) {
+        if (!isActive) {
             this.onSubmit(this.value);
         } else {
             this.currentValue = this.value;
@@ -66,17 +60,16 @@ export default class Input extends Touchable {
         this.ctx.font = '22px Courier';
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(this.label, this.x, this.y);
-
         const tw = this.ctx.measureText(this.label).width;
+        this.ctx.fillText(this.label, this.x  -tw, this.y);
 
         if (this.isActive) {
             this.ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            this.ctx.fillRect(this.x + tw, this.y - 14, 300, 25);
+            this.ctx.fillRect(this.x, this.y - 14, 300, 25);
         }
 
         if (this.isHover) this.ctx.fillStyle = COLORS.WHITE;
-        this.ctx.fillRect(this.x + tw, this.y + 11, 300, 2);
+        this.ctx.fillRect(this.x, this.y + 11, 300, 2);
 
         const value = this.isActive ? this.currentValue : this.value;
 
@@ -84,6 +77,6 @@ export default class Input extends Touchable {
         this.ctx.font = '25px Courier';
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(value, this.x + tw + 5, this.y);
+        this.ctx.fillText(value, this.x + 5, this.y);
     }
 }
