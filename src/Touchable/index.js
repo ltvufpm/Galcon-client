@@ -112,12 +112,12 @@ export class TouchableRect extends Touchable {
         )
 
         if (this.text) {
-            const textWidth = this.ctx.measureText(this.text).width
-
+            
             this.ctx.fillStyle = COLORS.WHITE
             this.ctx.font = '25px Courier'
             this.ctx.textAlign = 'left'
             this.ctx.textBaseline = 'middle'
+            const textWidth = this.ctx.measureText(this.text).width;
             this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
         }
     }
