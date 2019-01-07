@@ -4,30 +4,37 @@ import {
   getPlanetColors,
   COLORS,
   SCREEN_WIDTH,
+  POWER_VALUES,
   isPointInsideCircle
 } from '../Utils'
 import { PlanetManager } from '../Planet/PlanetManager';
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 import Base from '../Base'
-import { TouchableImage } from '../Touchable'
+import {
+  TouchableImage,
+  TouchableText
+} from '../Touchable'
+import User from '../User';
 
 export default class Game extends Base {
   constructor (parent) {
     super(parent)
-    this.ctx.colors = getPlanetColors()
-    this.planets = PlanetManager.generatePlanets(10, 50, this.ctx, this.canvas)
-    this.ongoingShips = [];
+    this.ctx.colors = getPlanetColors(User.planetColor)
+    this.planets = PlanetManager.generatePlanets(User.getPlanetsCount(), 50, this.ctx, this.canvas)
+    this.ongoingShips = []
     this.fromPlanets = [];
     this.victory = null
-    this.dummy = new DummyPlayer(this)
-    this.power = 0.5;
+    this.dummy = new DummyPlayer(this);
+    this.powerIndex = User.power;
+    this.power = POWER_VALUES[this.powerIndex];
     this.setOriginPlayerPlanets(2)
 
     this.touchables = [
       new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
       new TouchableImage(this.ctx, SCREEN_WIDTH - 80, 8, 'redo', this.handleRedoClicked.bind(this), 25),
       new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this)),
+      new TouchableText(this.ctx, 10, 740, `${this.power * 100}%`, this.updatePower.bind(this))
     ];
   }
   setOriginPlayerPlanets (playerCount) {
@@ -36,12 +43,14 @@ export default class Game extends Base {
       this.planets[i].side = i + 1
     }
   }
-  handleCogsClicked() {}
   handleRedoClicked() {
     this.parent.goToPage('game', true);
   }
   handleSignOutClicked() {
     this.parent.goToPage('welcome');
+  }
+  handleCogsClicked() {
+    this.parent.goToPage('settings');
   }
   renderManagementPanel() {
     for (const touchable of this.touchables) touchable.draw();
@@ -63,7 +72,7 @@ export default class Game extends Base {
       playerDomainCount[this.planets[i].side]++
     }
     if (playerDomainCount[1] === 0) this.victory = 'Dummy wins'
-    else if (playerDomainCount[2] === 0) this.victory = 'Player wins'
+    else if (playerDomainCount[2] === 0) this.victory = `${User.playerName} wins`
     else this.victory = null
   }
   updateOngoingShips () {
@@ -99,9 +108,7 @@ export default class Game extends Base {
     this.renderSides()
     this.renderplanets()
     this.renderOngoingShips()
-    // this.renderHalfCommand()
     this.renderVictory()
-    this.renderPower()
     this.renderManagementPanel()
   }
   renderplanets () {
@@ -116,23 +123,26 @@ export default class Game extends Base {
   }
 
   renderSides () {
+    let tw = this.ctx.measureText(User.playerName).width;
     this.ctx.fillStyle = this.ctx.colors[1].fill
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('Player', 10, 20)
+    this.ctx.fillText(User.playerName, 10, 20)
 
     this.ctx.fillStyle = COLORS.PINK
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('vs.', 110, 20)
+    this.ctx.fillText('vs.', tw + 20, 20)
+
+    tw += this.ctx.measureText('vs.').width;
 
     this.ctx.fillStyle = this.ctx.colors[2].fill
     this.ctx.font = '25px Courier'
     this.ctx.textAlign = 'left'
     this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('Dummy', 160, 20)
+    this.ctx.fillText('Dummy', tw + 25, 20)
   }
   renderVictory () {
     if (this.victory) {
@@ -147,18 +157,11 @@ export default class Game extends Base {
       )
     }
   }
-  renderPower () {
-    this.ctx.fillStyle = COLORS.GRAY1
-    this.ctx.font = '25px Courier'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'middle'
-    this.ctx.fillText(`${this.power * 100}%`, 10, 740)
-  }
   updatePower() {
-    this.power += 0.25;
-    if (this.power > 1) {
-      this.power = 0;
-    }
+    this.powerIndex += 1;
+    if (this.powerIndex >= POWER_VALUES.length) this.powerIndex = 0;
+    this.power = POWER_VALUES[this.powerIndex];
+    this.touchables[3].setText(`${this.power * 100}%`);
   }
   executeCommand (command) {
     if (!this.power) return;
@@ -176,7 +179,6 @@ export default class Game extends Base {
       s.number *= (1 - this.power);
     }
   }
-
   mouseClick (x, y) {
     super.mouseClick(x, y);
 

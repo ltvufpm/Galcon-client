@@ -1,5 +1,6 @@
 import Game from './Game'
 import Welcome from './Welcome';
+import Settings from './Settings';
 import Timer from './Timer'
 import { COLORS } from './Utils'
 
@@ -26,7 +27,9 @@ class Canvas {
     this.canvas.addEventListener('mousemove', e =>
       this.page.mouseMove(e.offsetX, e.offsetY)
     );
-    this.canvas.addEventListener('dblclick', e => this.page.mouseDoubleClick(e.offsetX, e.offsetY))
+    this.canvas.addEventListener('mouseup', e => this.page.mouseUp(e.offsetX, e.offsetY))
+    this.canvas.addEventListener('dblclick', e => this.page.mouseDoubleClick(e.offsetX, e.offsetY));
+    window.addEventListener('keydown', e => this.page.keyDown(e.keyCode, e.key));
   }
 
   goToPage(pageId, force = false) {
@@ -40,6 +43,11 @@ class Canvas {
       case 'welcome':
         this.page = new Welcome(this);
         this.currentPage = 'welcome';
+        break;
+      case 'settings':
+        this.page = new Settings(this);
+        this.currentPage = 'settings';
+        break;
       default:
         break;
     }

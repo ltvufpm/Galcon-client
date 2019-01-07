@@ -6,7 +6,7 @@ export class Touchable {
     constructor(ctx, area, onClick) {
         this.ctx = ctx;
         this.area = area;
-        this.onClick = onClick;
+        if (onClick) this.onClick = onClick;
 
         this.isHover = false;
     }
@@ -20,10 +20,20 @@ export class Touchable {
     }
 
     onMouseClick(x, y) {
+      if (isPointInsideArea({ x, y }, this.area)) {
+        if (this.onClick) this.onClick();
+      }
+    }
+
+    onMouseUp(x, y) {
         if (isPointInsideArea({ x, y }, this.area)) {
             if (this.onClick) this.onClick();
         }
     }
+
+    onMouseDown(x, y) {}
+
+    onKeyDown() {}
 
     get() {
         return this.isHover ? this.elemHover : this.elem;
@@ -43,6 +53,32 @@ export class TouchableImage extends Touchable {
 
     draw() {
         this.ctx.drawImage(this.get(), this.area[0].x, this.area[0].y);
+    }
+}
+
+export class TouchableText extends Touchable {
+    constructor(ctx, x, y, text, onClick) {
+        ctx.font = '25px Courier';
+        const tw = ctx.measureText(text).width;
+
+        const area = [ { x, y }, { x: x + tw, y: y + 25 } ];
+
+        super(ctx, area, onClick);
+        this.elem = COLORS.GRAY1;
+        this.elemHover = COLORS.WHITE;
+        this.text = text;
+    }
+
+    setText(text) {
+        this.text = text;
+    }
+
+    draw() {
+        this.ctx.fillStyle = this.get();
+        this.ctx.font = '25px Courier';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(this.text, this.area[0].x, this.area[0].y);
     }
 }
 
@@ -81,12 +117,13 @@ export class TouchableRect extends Touchable {
             this.width, this.height
         )
 
-        const textWidth = this.ctx.measureText(this.text).width
-
-        this.ctx.fillStyle = COLORS.WHITE
-        this.ctx.font = '25px Courier'
-        this.ctx.textAlign = 'left'
-        this.ctx.textBaseline = 'middle'
-        this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
+        if (this.text) {
+            this.ctx.fillStyle = COLORS.WHITE
+            this.ctx.font = '25px Courier'
+            this.ctx.textAlign = 'left'
+            this.ctx.textBaseline = 'middle'
+            const textWidth = this.ctx.measureText(this.text).width;
+            this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
+        }
     }
 }

@@ -2,10 +2,19 @@ import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
   COLORS,
-  isPointInsideArea
+  PLANET_COLORS,
+  POWER_VALUES,
+  PLANETS_COUNT,
+  SPEED
 } from '../Utils';
 
+import Input from '../Input';
+import ColorSelector from '../Selector/ColorSelector';
+import TextSelector from '../Selector/TextSelector';
+
 import Base from '../Base';
+import { TouchableRect } from '../Touchable';
+import User from '../User';
 
 const ww = SCREEN_WIDTH / 2;
 const wh = SCREEN_HEIGHT / 2;
@@ -14,81 +23,29 @@ export default class Settings extends Base {
   constructor (parent) {
     super(parent);
 
-    this.breackpoints = {
-      startGameBtn : [
-        { x:412, y:584 }, { x:612, y:654 }
-      ]
-    };
+    const height = 200;
 
-    this.mouseUpHandlers = {
-      startGameBtn: this.handleStartGameBtnPressed.bind(this)
-    };
-
-    this.mouseMoveHandlers = {
-      startGameBtn: this.handleStartGameBtnHover.bind(this)
-    };
-
-    this.startButtonColor = false;
+    this.touchables = [
+      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'START GAME', this.handleStartGameBtnPressed.bind(this)),
+      new Input(this.ctx, 400, height, 'Name: ', User.playerName, User.setPlayerName.bind(User)),
+      new ColorSelector(this.ctx, 'Planet Color:', 400, height + 50, PLANET_COLORS, User.planetColor, User.setPlanetColor.bind(User)),
+      new TextSelector(this.ctx, 'Default Power:', 400, height + 150, POWER_VALUES.map(item => `${item * 100}%`), User.power, User.setPower.bind(User)),
+      new TextSelector(this.ctx, 'Planets Count:', 400, height + 200, PLANETS_COUNT, User.planetsCount, User.setPlanetsCount.bind(User), 40),
+      new TextSelector(this.ctx, 'Speed:', 400, height + 250, Object.keys(SPEED), Object.keys(SPEED).indexOf(User.speed), User.setSpeed.bind(User), 80)
+    ];
   }
 
   render() {
     this.renderLogo();
-    this.renderStartButton();
-  }
-
-  update() {
-  }
-
-  mouseUp(x, y) {
-    for (const key in this.breackpoints) {
-      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-        if (this.mouseUpHandlers[key]) this.mouseUpHandlers[key]();
-        return;
-      }
-    }
-  }
-
-  mouseMove(x, y) {
-    for (const key in this.breackpoints) {
-      if (isPointInsideArea({ x, y }, this.breackpoints[key])) {
-        if (this.mouseMoveHandlers[key]) this.mouseMoveHandlers[key]();
-        return;
-      }
-    }
-    this.isStartHover = false;
+    for (const touchable of this.touchables) touchable.draw();
   }
 
   handleStartGameBtnPressed() {
     this.parent.goToPage('game');
   }
 
-  handleStartGameBtnHover() {
-    this.isStartHover = true;
-  }
-
   renderLogo() {
     const logo = document.getElementById('logo')
-    this.ctx.drawImage(logo, ww - 93, wh - 56);
-  }
-
-  renderNameInput() {
-    this.ctx.fillStyle = COLORS.BLUE3
-    this.ctx.font = '25px Courier'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('Name', ww,  wh)
-  }
-
-  renderStartButton() {
-    this.ctx.fillStyle = this.isStartHover ? COLORS.ORANGE : COLORS.RED
-    this.ctx.fillRect(ww - 100, wh + 200, 200, 70)
-
-    const textWidth = this.ctx.measureText('START GAME').width
-
-    this.ctx.fillStyle = COLORS.WHITE
-    this.ctx.font = '25px Courier'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'middle'
-    this.ctx.fillText('START GAME', ww - textWidth/2, wh + 235)
+    this.ctx.drawImage(logo, ww - 93, 56);
   }
 }

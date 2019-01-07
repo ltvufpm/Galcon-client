@@ -1,7 +1,3 @@
-import {
-    isPointInsideArea
-} from '../Utils';
-
 export default class Base {
     constructor(parent) {
         this.canvas = parent.canvas
@@ -22,5 +18,13 @@ export default class Base {
 
     mouseMove(x, y) {
         for (const touchable of this.touchables) touchable.onMouseMove(x, y);
+    }
+
+    mouseUp(x, y) {
+        for (const touchable of this.touchables) touchable.onMouseUp(x, y);
+    }
+
+    keyDown(code, key) {
+        for (const touchable of this.touchables) touchable.onKeyDown(code, key);
     }
 }

@@ -2,8 +2,11 @@ import {
   euclidDist,
   ONGOING_SHIPS_SPEED,
   PLANET_SIZE,
-  randBetween
+  randBetween,
+  SPEED
 } from '../Utils'
+
+import User from '../User';
 
 export default class Ship {
   constructor (originPlanetIndex, destPlanetIndex, planets, ctx, canvas, power) {
@@ -35,7 +38,7 @@ export default class Ship {
   }
 
   march () {
-    this.advance(ONGOING_SHIPS_SPEED)
+    this.advance(SPEED[User.speed])
   }
 
   render () {
