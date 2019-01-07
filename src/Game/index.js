@@ -10,7 +10,10 @@ import Planet from '../Planet'
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
 import Base from '../Base'
-import { TouchableImage } from '../Touchable'
+import {
+  TouchableImage,
+  TouchableText
+} from '../Touchable'
 
 function generatePlanets (count, distanceTolerance, ctx, canvas) {
   function getRandomPlace () {
@@ -76,7 +79,8 @@ export default class Game extends Base {
     this.touchables = [
       new TouchableImage(this.ctx, SCREEN_WIDTH - 125, 5, 'cogs', this.handleCogsClicked.bind(this)),
       new TouchableImage(this.ctx, SCREEN_WIDTH - 80, 8, 'redo', this.handleRedoClicked.bind(this), 25),
-      new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this))
+      new TouchableImage(this.ctx, SCREEN_WIDTH - 40, 5, 'sign-out', this.handleSignOutClicked.bind(this)),
+      new TouchableText(this.ctx, 10, 740, `${this.power * 100}%`, this.updatePower.bind(this))
     ];
   }
   setOriginPlayerPlanets (playerCount) {
@@ -150,7 +154,6 @@ export default class Game extends Base {
     this.renderOngoingShips()
     this.renderHalfCommand()
     this.renderVictory()
-    this.renderPower()
     this.renderManagementPanel()
   }
   renderplanets () {
@@ -207,18 +210,12 @@ export default class Game extends Base {
       )
     }
   }
-  renderPower () {
-    this.ctx.fillStyle = COLORS.GRAY1
-    this.ctx.font = '25px Courier'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'middle'
-    this.ctx.fillText(`${this.power * 100}%`, 10, 740)
-  }
   updatePower() {
     this.power += 0.25;
     if (this.power > 1) {
       this.power = 0;
     }
+    this.touchables[3].setText(`${this.power * 100}%`);
   }
   executeCommand (command) {
     if (!this.power) return;
@@ -239,9 +236,7 @@ export default class Game extends Base {
   mouseDown (x, y) {
     super.mouseDown(x, y);
     if (this.victory) return
-    if (x >= 10 && x <= 70 && y >= 740 && y <= 750) {
-      this.updatePower()
-    } else if (!this.halfCommand) {
+    if (!this.halfCommand) {
       let sIndex = hitPlanet(x, y, this.planets)
       if (sIndex >= 0 && this.planets[sIndex].side === 1) {
         // side 1 is player

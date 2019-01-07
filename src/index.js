@@ -6,7 +6,7 @@ import { COLORS } from './Utils'
 window.onload = () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  new Canvas(canvas, ctx, 'welcome');
+  new Canvas(canvas, ctx, 'game');
 }
 
 class Canvas {

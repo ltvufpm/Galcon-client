@@ -48,6 +48,32 @@ export class TouchableImage extends Touchable {
     }
 }
 
+export class TouchableText extends Touchable {
+    constructor(ctx, x, y, text, onClick) {
+        ctx.font = '25px Courier';
+        const tw = ctx.measureText(text).width;
+
+        const area = [ { x, y }, { x: x + tw, y: y + 25 } ];
+
+        super(ctx, area, onClick);
+        this.elem = COLORS.GRAY1;
+        this.elemHover = COLORS.WHITE;
+        this.text = text;
+    }
+
+    setText(text) {
+        this.text = text;
+    }
+
+    draw() {
+        this.ctx.fillStyle = this.get();
+        this.ctx.font = '25px Courier';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(this.text, this.area[0].x, this.area[0].y);
+    }
+}
+
 export class TouchableRect extends Touchable {
     constructor(ctx, x, y, w, h, text, onClick) {
         const area = [ { x, y }, { x: x + w, y: y + h } ];
