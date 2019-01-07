@@ -30,6 +30,10 @@ export const COLORS = {
   WHITE: '#FFFFFF'
 }
 
+export const PLANET_COLORS = [
+  '#d31f31', '#ffaa22', '#FFFF00', '#00cc00', '#2222DD', '#8888FF', '#FF00FF', '#990099', '#ff0055', 'rnd'
+]
+
 export const PLAYER_COLOR_PAIRS = [
   [COLORS.RED0, COLORS.BLUE3],
   [COLORS.GREEN2, COLORS.PURPLE],
@@ -42,8 +46,18 @@ export const SMALL_PLANET_SIZE = 25
 export const SCREEN_HEIGHT = 768
 export const SCREEN_WIDTH = 1024
 
-export function getPlanetColors () {
+export function getPlanetColors (color) {
   const pair = PLAYER_COLOR_PAIRS[randBetween(0, 2)]
+  if (PLANET_COLORS[color] !== 'rnd') {
+    pair[0] = PLANET_COLORS[color];
+    const colors = PLANET_COLORS.slice();
+
+    colors.splice(color, 1);
+    colors.splice(colors.length - 1, 1)
+
+    pair[1] = colors[randBetween(0, colors.length - 1)];
+  }
+
   return [
     {
       // neutral

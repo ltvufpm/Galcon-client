@@ -63,7 +63,8 @@ function hitPlanet (x, y, planets) {
 export default class Game extends Base {
   constructor (parent) {
     super(parent)
-    this.ctx.colors = getPlanetColors()
+    const planetColor = localStorage.getItem('planetColor') || 0;
+    this.ctx.colors = getPlanetColors(planetColor)
     this.planets = generatePlanets(10, 50, this.ctx, this.canvas)
     this.ongoingShips = []
     this.halfCommand = null

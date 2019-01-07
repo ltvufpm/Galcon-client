@@ -7,7 +7,7 @@ import { COLORS } from './Utils'
 window.onload = () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  new Canvas(canvas, ctx, 'settings');
+  new Canvas(canvas, ctx, 'welcome');
 }
 
 class Canvas {
@@ -40,9 +40,11 @@ class Canvas {
       case 'welcome':
         this.page = new Welcome(this);
         this.currentPage = 'welcome';
+        break;
       case 'settings':
         this.page = new Settings(this);
         this.currentPage = 'settings';
+        break;
       default:
         break;
     }

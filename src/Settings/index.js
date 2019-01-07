@@ -2,10 +2,12 @@ import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
   COLORS,
+  PLANET_COLORS,
   isPointInsideArea
 } from '../Utils';
 
 import Input from '../Input';
+import Selector from '../Selector';
 
 import Base from '../Base';
 import { TouchableRect } from '../Touchable';
@@ -18,10 +20,12 @@ export default class Settings extends Base {
     super(parent);
 
     this.playerName = localStorage.getItem('playerName') || 'Player';
+    this.planetColor = localStorage.getItem('planetColor') || 0;
 
     this.touchables = [
-      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'Settings', this.handleStartGameBtnPressed.bind(this)),
-      new Input(this.ctx, 'center', 250, 'Name: ', this.playerName, this.handleSavePlayerName.bind(this))
+      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'START GAME', this.handleStartGameBtnPressed.bind(this)),
+      new Input(this.ctx, 'center', 250, 'Name: ', this.playerName, this.handleSavePlayerName.bind(this)),
+      new Selector(this.ctx, 'Planet Color:', 210, 300, PLANET_COLORS, this.planetColor, this.handleSavePlanetColor.bind(this))
     ];
   }
 
@@ -33,6 +37,11 @@ export default class Settings extends Base {
   handleSavePlayerName(name) {
     this.playerName = name;
     localStorage.setItem('playerName', name);
+  }
+
+  handleSavePlanetColor(colorIndex) {
+    this.planetColor = colorIndex;
+    localStorage.setItem('planetColor', colorIndex);
   }
 
   handleStartGameBtnPressed() {

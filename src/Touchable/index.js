@@ -6,7 +6,7 @@ export class Touchable {
     constructor(ctx, area, onClick) {
         this.ctx = ctx;
         this.area = area;
-        this.onClick = onClick;
+        if (onClick) this.onClick = onClick;
 
         this.isHover = false;
     }
@@ -111,12 +111,14 @@ export class TouchableRect extends Touchable {
             this.width, this.height
         )
 
-        const textWidth = this.ctx.measureText(this.text).width
+        if (this.text) {
+            const textWidth = this.ctx.measureText(this.text).width
 
-        this.ctx.fillStyle = COLORS.WHITE
-        this.ctx.font = '25px Courier'
-        this.ctx.textAlign = 'left'
-        this.ctx.textBaseline = 'middle'
-        this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
+            this.ctx.fillStyle = COLORS.WHITE
+            this.ctx.font = '25px Courier'
+            this.ctx.textAlign = 'left'
+            this.ctx.textBaseline = 'middle'
+            this.ctx.fillText(this.text, this.area[0].x + this.width/2 - textWidth/2, this.area[0].y + this.height/2)
+        }
     }
 }

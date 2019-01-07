@@ -8,11 +8,6 @@ export default class Base {
         this.ctx = parent.ctx
         this.parent = parent
 
-        this.breackpoints = {};
-        this.mouseUpHandlers = {};
-        this.mouseMoveHandlers = {};
-        this.mouseDownHandlers = {};
-
         this.touchables = [];
     }
 
