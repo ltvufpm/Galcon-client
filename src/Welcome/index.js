@@ -25,8 +25,6 @@ export default class Welcome extends Base {
     for (const touchable of this.touchables) touchable.draw();
   }
 
-  update() {}
-
   handleStartGameBtnPressed() {
     this.parent.goToPage('game');
   }
