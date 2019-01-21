@@ -1,6 +1,7 @@
 import Game from './Game'
 import Welcome from './Welcome';
 import Settings from './Settings';
+import Statistics from './Statistics';
 import Timer from './Timer'
 import { COLORS } from './Utils'
 
@@ -47,6 +48,10 @@ class Canvas {
       case 'settings':
         this.page = new Settings(this);
         this.currentPage = 'settings';
+        break;
+      case 'statistics':
+        this.page = new Statistics(this);
+        this.currentPage = 'statistics';
         break;
       default:
         break;

@@ -7,6 +7,9 @@ import {
   POWER_VALUES,
   isPointInsideCircle
 } from '../Utils'
+import {
+  addRecord
+} from '../Utils/storage'
 import { PlanetManager } from '../Planet/PlanetManager';
 import DummyPlayer from '../DummyPlayer'
 import Ship from '../Ship/index'
@@ -16,6 +19,7 @@ import {
   TouchableText
 } from '../Touchable'
 import User from '../User';
+
 
 export default class Game extends Base {
   constructor (parent) {
@@ -71,8 +75,15 @@ export default class Game extends Base {
     for (let i = 0; i < this.planets.length; i++) {
       playerDomainCount[this.planets[i].side]++
     }
-    if (playerDomainCount[1] === 0) this.victory = 'Dummy wins'
-    else if (playerDomainCount[2] === 0) this.victory = `${User.playerName} wins`
+    if (playerDomainCount[1] === 0) {
+      this.victory = 'Dummy wins'
+      addRecord('Dummy', playerDomainCount[2])
+    }
+    else if (playerDomainCount[2] === 0) {
+      this.victory = `${User.playerName} wins`
+      addRecord(User.playerName, playerDomainCount[1])
+
+    }
     else this.victory = null
   }
   updateOngoingShips () {
