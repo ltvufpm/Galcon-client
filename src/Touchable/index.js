@@ -69,6 +69,8 @@ export class TouchableText extends Touchable {
         this.text = text;
     }
 
+    onMouseUp() {}
+
     setText(text) {
         this.text = text;
     }

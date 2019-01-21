@@ -4,7 +4,7 @@ class User {
     constructor() {
         this.playerName = localStorage.getItem('playerName') || 'Player';
         this.planetColor = localStorage.getItem('planetColor') || 0;
-        this.power = localStorage.getItem('power') || POWER_VALUES.indexOf(0.5);
+        this.power = +localStorage.getItem('power') || POWER_VALUES.indexOf(0.5);
         this.planetsCount = localStorage.getItem('planetsCount') || PLANETS_COUNT.indexOf(10);
         this.speed = localStorage.getItem('speed') || 'normal';
     }
