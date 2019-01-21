@@ -16,7 +16,8 @@ export default class Welcome extends Base {
     super(parent);
 
     this.touchables = [
-      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'START GAME', this.handleStartGameBtnPressed.bind(this))
+      new TouchableRect(this.ctx, ww - 100, wh + 200, 200, 70, 'START GAME', this.handleStartGameBtnPressed.bind(this)),
+      new TouchableRect(this.ctx, ww - 100, wh + 290, 200, 70, 'STATISTICS', this.handleStatisticsBtnPressed.bind(this))
     ];
   }
 
@@ -27,6 +28,10 @@ export default class Welcome extends Base {
 
   handleStartGameBtnPressed() {
     this.parent.goToPage('game');
+  }
+
+  handleStatisticsBtnPressed() {
+    this.parent.goToPage('statistics');
   }
 
   renderLogo() {
